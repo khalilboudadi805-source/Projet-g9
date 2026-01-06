@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Bibliothèque</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles existants */
+        .form-modif {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .form-modif h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .form-modif .form-champ {
+            margin-bottom: 15px;
+        }
+        
+        .form-modif label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .form-modif input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-modif input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .boutons-modif {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        
+        .boutons-modif button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .boutons-modif button:first-child {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .boutons-modif button:first-child:hover {
+            background: #27ae60;
+        }
+        
+        .boutons-modif button:last-child {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .boutons-modif button:last-child:hover {
+            background: #c0392b;
+        }
+        
+        /* Nouveaux styles pour les graphiques */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .graphique-container {
+            margin-top: 15px;
+            height: 200px;
+            position: relative;
+        }
+        
+        /* Graphique à barres */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 150px;
+            padding: 10px;
+            border-bottom: 2px solid #eee;
+            border-left: 2px solid #eee;
+        }
+        
+        .bar {
+            width: 40px;
+            background: linear-gradient(to top, #3498db, #2980b9);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: height 0.3s ease;
+        }
+        
+        .bar:hover {
+            background: linear-gradient(to top, #2980b9, #1f639e);
+        }
+        
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #666;
+            white-space: nowrap;
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* Graphique circulaire */
+        .pie-chart {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #3498db 0% 40%,
+                #2ecc71 40% 70%,
+                #e74c3c 70% 85%,
+                #f39c12 85% 100%
+            );
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .pie-center {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .pie-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        /* Graphique ligne */
+        .line-chart {
+            position: relative;
+            height: 150px;
+            padding: 10px;
+        }
+        
+        .line-chart-path {
+            fill: none;
+            stroke: #3498db;
+            stroke-width: 3;
+        }
+        
+        .line-chart-point {
+            fill: white;
+            stroke: #3498db;
+            stroke-width: 2;
+            cursor: pointer;
+        }
+        
+        .line-chart-grid {
+            stroke: #eee;
+            stroke-width: 1;
+        }
+        
+        /* Graphique jauge */
+        .gauge-container {
+            position: relative;
+            height: 120px;
+            width: 100%;
+        }
+        
+        .gauge-background {
+            fill: #f0f0f0;
+        }
+        
+        .gauge-fill {
+            fill: #2ecc71;
+        }
+        
+        .gauge-text {
+            text-anchor: middle;
+            font-weight: bold;
+            fill: #2c3e50;
+        }
+        
+        /* Section tableau de bord */
+        #tableau-de-bord {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        
+        .stat-change {
+            font-size: 14px;
+            color: #27ae60;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .stat-change.negative {
+            color: #e74c3c;
+        }
+        
+        /* Animation pour les graphiques */
+        @keyframes growBar {
+            from { height: 0; }
+            to { height: var(--target-height); }
+        }
+        
+        .bar {
+            animation: growBar 1s ease-out;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .pie-chart {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .pie-center {
+                width: 50px;
+                height: 50px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Menu -->
+        <div class="menu">
+            <h2>📚 Menu</h2>
+            <button onclick="afficherSection('tableau-de-bord')">📊 Tableau de bord</button>
+            <button onclick="afficherSection('livres')">📖 Livres</button>
+            <button onclick="afficherSection('auteurs')">✍️ Auteurs</button>
+            <button onclick="afficherSection('categories')">🏷️ Catégories</button>
+            <button onclick="afficherSection('adherents')">👥 Adhérents</button>
+            <button onclick="afficherSection('emprunts')">🔄 Emprunts</button>
+            <button onclick="deconnexion()" class="btn-deconnexion">🚪 Déconnexion</button>
+        </div>
+        
+        <!-- Contenu principal -->
+        <div class="contenu">
+            <div class="header">
+                <h1>Tableau de Bord Complet</h1>
+                <p>Bienvenue Admin</p>
+            </div>
+            
+            <!-- Section Tableau de bord avec graphiques -->
+            <div id="tableau-de-bord" class="section active">
+                <h2>📊 Tableau de Bord Statistiques</h2>
+                
+                <!-- Statistiques principales -->
+                <div class="stats-overview">
+                    <div class="dashboard-header">
+                        <div>
+                            <h3>Vue d'ensemble de la bibliothèque</h3>
+                            <p>Données mises à jour en temps réel</p>
+                        </div>
+                        <button onclick="actualiserStats()" style="background: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                            🔄 Actualiser
+                        </button>
+                    </div>
+                    
+                    <div class="stats-container">
+                        <!-- Carte 1: Livres par catégorie -->
+                        <div class="stat-card">
+                            <h3>📚 Livres par catégorie</h3>
+                            <div class="graphique-container">
+                                <div class="bar-chart" id="bar-chart-livres">
+                                    <!-- Les barres seront générées par JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Carte 2: Emprunts par mois -->
+                        <div class="stat-card">
+                            <h3>📅 Emprunts mensuels</h3>
+                            <div class="graphique-container">
+                                <div class="line-chart" id="line-chart-emprunts">
+                                    <!-- Le graphique en ligne sera généré par JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Carte 3: Statut des livres -->
+                        <div class="stat-card">
+                            <h3>📊 Statut des livres</h3>
+                            <div class="graphique-container">
+                                <div class="pie-chart">
+                                    <div class="pie-center" id="pie-total">3</div>
+                                </div>
+                                <div class="pie-legend" id="pie-legend">
+                                    <!-- La légende sera générée par JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Carte 4: Taux d'occupation -->
+                        <div class="stat-card">
+                            <h3>🎯 Taux d'occupation</h3>
+                            <div class="graphique-container">
+                                <div class="gauge-container">
+                                    <svg width="100%" height="100%" viewBox="0 0 200 120" id="gauge-chart">
+                                        <!-- La jauge sera générée par JavaScript -->
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                       
+                        
+                        <!-- Carte 6: Adhérents actifs -->
+                        <div class="stat-card">
+                            <h3>👥 Adhérents actifs</h3>
+                            <div class="stat-number" id="stat-adherents">2</div>
+                            <p>Nombre d'adhérents actifs ce mois</p>
+                            <div class="stat-change" id="change-adherents">
+                                <span>↑ 12%</span> vs mois dernier
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formulaire de modification -->
+            <div id="form-modif" class="form-modif">
+                <h3 id="titre-form-modif">Modifier</h3>
+                
+                <div id="champ-titre" class="form-champ" style="display: none;">
+                    <label>Titre :</label>
+                    <input type="text" id="modif-titre" placeholder="Titre">
+                </div>
+                
+                <div id="champ-nom" class="form-champ" style="display: none;">
+                    <label>Nom :</label>
+                    <input type="text" id="modif-nom" placeholder="Nom">
+                </div>
+                
+                <div id="champ-email" class="form-champ" style="display: none;">
+                    <label>Email :</label>
+                    <input type="email" id="modif-email" placeholder="Email">
+                </div>
+                
+                <div id="champ-telephone" class="form-champ" style="display: none;">
+                    <label>Téléphone :</label>
+                    <input type="tel" id="modif-telephone" placeholder="Téléphone">
+                </div>
+                
+                <div id="champ-nationalite" class="form-champ" style="display: none;">
+                    <label>Nationalité :</label>
+                    <input type="text" id="modif-nationalite" placeholder="Nationalité">
+                </div>
+                
+                <div id="champ-description" class="form-champ" style="display: none;">
+                    <label>Description :</label>
+                    <input type="text" id="modif-description" placeholder="Description">
+                </div>
+                
+                <div id="champ-annee" class="form-champ" style="display: none;">
+                    <label>Année :</label>
+                    <input type="number" id="modif-annee" placeholder="Année">
+                </div>
+                
+                <div class="boutons-modif">
+                    <button onclick="enregistrerModification()">Enregistrer</button>
+                    <button onclick="cacherFormulaireModif()">Annuler</button>
+                </div>
+            </div>
+            
+            <!-- Section Livres -->
+            <div id="livres" class="section">
+                <h2>📖 Gestion des Livres</h2>
+                
+                <div class="form-ajout">
+                    <input type="text" id="titreLivre" placeholder="Titre du livre">
+                    <select id="auteurLivre">
+                        <option value="">Choisir un auteur</option>
+                    </select>
+                    <select id="categorieLivre">
+                        <option value="">Choisir une catégorie</option>
+                    </select>
+                    <input type="number" id="anneeLivre" placeholder="Année" min="1000" max="2024">
+                    <button onclick="ajouterLivre()">➕ Ajouter</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Titre</th>
+                            <th>Auteur</th>
+                            <th>Catégorie</th>
+                            <th>Année</th>
+                            <th>Disponible</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liste-livres">
+                        <!-- Les livres seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section Auteurs -->
+            <div id="auteurs" class="section">
+                <h2>✍️ Gestion des Auteurs</h2>
+                
+                <div class="form-ajout">
+                    <input type="text" id="nomAuteur" placeholder="Nom de l'auteur">
+                    <input type="text" id="nationaliteAuteur" placeholder="Nationalité">
+                    <button onclick="ajouterAuteur()">➕ Ajouter</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Nationalité</th>
+                            <th>Nb Livres</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liste-auteurs">
+                        <!-- Les auteurs seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section Catégories -->
+            <div id="categories" class="section">
+                <h2>🏷️ Gestion des Catégories</h2>
+                
+                <div class="form-ajout">
+                    <input type="text" id="nomCategorie" placeholder="Nom de la catégorie">
+                    <input type="text" id="descriptionCategorie" placeholder="Description">
+                    <button onclick="ajouterCategorie()">➕ Ajouter</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Nb Livres</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liste-categories">
+                        <!-- Les catégories seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section Adhérents -->
+            <div id="adherents" class="section">
+                <h2>👥 Gestion des Adhérents</h2>
+                
+                <div class="form-ajout">
+                    <input type="text" id="nomAdherent" placeholder="Nom complet">
+                    <input type="email" id="emailAdherent" placeholder="Email">
+                    <input type="tel" id="telAdherent" placeholder="Téléphone">
+                    <button onclick="ajouterAdherent()">➕ Ajouter</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liste-adherents">
+                        <!-- Les adhérents seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section Emprunts -->
+            <div id="emprunts" class="section">
+                <h2>🔄 Gestion des Emprunts</h2>
+                
+                <div class="form-ajout">
+                    <select id="livreEmprunt">
+                        <option value="">Choisir un livre</option>
+                    </select>
+                    <select id="adherentEmprunt">
+                        <option value="">Choisir un adhérent</option>
+                    </select>
+                    <button onclick="ajouterEmprunt()">➕ Nouvel emprunt</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Livre</th>
+                            <th>Adhérent</th>
+                            <th>Date emprunt</th>
+                            <th>Date retour</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liste-emprunts">
+                        <!-- Les emprunts seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+    <script>
+        // Fonctions pour les graphiques
+        function actualiserStats() {
+            // Simuler des données pour les graphiques
+            genererGraphiqueLivres();
+            genererGraphiqueEmprunts();
+            genererGraphiqueStatut();
+            genererGraphiqueJauge();
+            genererGraphiqueAuteurs();
+            
+            // Mettre à jour les stats textuelles
+            document.getElementById('stat-adherents').textContent = Math.floor(Math.random() * 50) + 50;
+            document.getElementById('pie-total').textContent = Math.floor(Math.random() * 200) + 100;
+            
+            // Afficher une notification
+            alert('Statistiques actualisées avec succès !');
+        }
+        
+        function genererGraphiqueLivres() {
+            const categories = ['Roman', 'Science', 'Histoire', 'Art', 'Jeunesse'];
+            const container = document.getElementById('bar-chart-livres');
+            container.innerHTML = '';
+            
+            categories.forEach((cat, index) => {
+                const valeur = Math.floor(Math.random() * 40) + 10;
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = `${valeur * 2}px`;
+                bar.style.setProperty('--target-height', `${valeur * 2}px`);
+                bar.innerHTML = `
+                    <div class="bar-value">${valeur}</div>
+                    <div class="bar-label">${cat}</div>
+                `;
+                container.appendChild(bar);
+            });
+        }
+        
+        function genererGraphiqueEmprunts() {
+            const mois = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'];
+            const container = document.getElementById('line-chart-emprunts');
+            container.innerHTML = '';
+            
+            // Simuler un graphique en ligne simple
+            let html = '<svg width="100%" height="100%" viewBox="0 0 300 150">';
+            
+            // Grille
+            for(let i = 0; i <= 150; i += 30) {
+                html += `<line x1="0" y1="${i}" x2="300" y2="${i}" class="line-chart-grid"/>`;
+            }
+            
+            // Points et ligne
+            let points = '';
+            let line = 'M';
+            
+            mois.forEach((mois, i) => {
+                const x = 50 + i * 40;
+                const y = 130 - Math.random() * 100;
+                points += `<circle cx="${x}" cy="${y}" r="4" class="line-chart-point"/>`;
+                line += `${i === 0 ? '' : 'L'}${x},${y} `;
+            });
+            
+            html += `<path d="${line}" class="line-chart-path"/>`;
+            html += points;
+            html += '</svg>';
+            
+            container.innerHTML = html;
+        }
+        
+        function genererGraphiqueStatut() {
+            const legendContainer = document.getElementById('pie-legend');
+            const statuts = [
+                {label: 'Disponible', couleur: '#3498db', valeur: 45},
+                {label: 'Emprunté', couleur: '#2ecc71', valeur: 30},
+                {label: 'En retard', couleur: '#e74c3c', valeur: 15},
+                {label: 'Réservé', couleur: '#f39c12', valeur: 10}
+            ];
+            
+            let html = '';
+            statuts.forEach(statut => {
+                html += `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: ${statut.couleur}"></div>
+                        <span>${statut.label}: ${statut.valeur}%</span>
+                    </div>
+                `;
+            });
+            
+            legendContainer.innerHTML = html;
+        }
+        
+        function genererGraphiqueJauge() {
+            const valeur = Math.floor(Math.random() * 100);
+            const svgContainer = document.getElementById('gauge-chart');
+            
+            const angle = (valeur / 100) * 180;
+            const x = 100 + 80 * Math.cos((angle - 90) * Math.PI / 180);
+            const y = 100 + 80 * Math.sin((angle - 90) * Math.PI / 180);
+            
+            const svg = `
+                <path d="M 20,100 A 80,80 0 0,1 180,100" fill="none" stroke="#f0f0f0" stroke-width="20"/>
+                <path d="M 20,100 A 80,80 0 ${angle > 90 ? 1 : 0},1 ${x},${y}" fill="none" stroke="#2ecc71" stroke-width="20"/>
+                <text x="100" y="90" class="gauge-text" font-size="24">${valeur}%</text>
+                <text x="100" y="110" class="gauge-text" font-size="12">Taux d'occupation</text>
+            `;
+            
+            svgContainer.innerHTML = svg;
+        }
+        
+        function genererGraphiqueAuteurs() {
+            const auteurs = [
+                {nom: 'Hugo', livres: 28},
+                {nom: 'Dumas', livres: 24},
+                {nom: 'Zola', livres: 20},
+                {nom: 'Flaubert', livres: 16},
+                {nom: 'Verne', livres: 12}
+            ];
+            
+            const container = document.getElementById('bar-chart-auteurs');
+            container.innerHTML = '';
+            
+            auteurs.forEach(auteur => {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = '20px';
+                bar.style.width = `${auteur.livres * 3}px`;
+                bar.style.background = 'linear-gradient(to right, #9b59b6, #8e44ad)';
+                bar.style.margin = '5px 0';
+                bar.style.position = 'relative';
+                bar.innerHTML = `
+                    <span style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); color: white; font-size: 12px;">
+                        ${auteur.nom} (${auteur.livres})
+                    </span>
+                `;
+                container.appendChild(bar);
+            });
+        }
+        
+        // Initialiser les graphiques au chargement
+        window.addEventListener('DOMContentLoaded', () => {
+            actualiserStats();
+        });
+    </script>
+</body>
+</html>
