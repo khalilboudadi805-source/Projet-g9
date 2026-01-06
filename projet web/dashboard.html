@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Bibliothèque</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+     
+        .form-modif {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .form-modif h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .form-modif .form-champ {
+            margin-bottom: 15px;
+        }
+        
+        .form-modif label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .form-modif input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-modif input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .boutons-modif {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        
+        .boutons-modif button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .boutons-modif button:first-child {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .boutons-modif button:first-child:hover {
+            background: #27ae60;
+        }
+        
+        .boutons-modif button:last-child {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .boutons-modif button:last-child:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Menu -->
+        <div class="menu">
+            <h2>📚 Menu</h2>
+            <button onclick="afficherSection('livres')">📖 Livres</button>
+            <button onclick="afficherSection('auteurs')">✍️ Auteurs</button>
+            <button onclick="afficherSection('categories')">🏷️ Catégories</button>
+            <button onclick="afficherSection('adherents')">👥 Adhérents</button>
+            <button onclick="afficherSection('emprunts')">🔄 Emprunts</button>
+            <button onclick="deconnexion()" class="btn-deconnexion">🚪 Déconnexion</button>
+        </div>
+        
+        <!-- Contenu principal -->
+        <div class="contenu">
+            <div class="header">
+                <h1>Tableau de Bord Complet</h1>
+                <p>Bienvenue Admin</p>
+            </div>
+            
+            <!-- Formulaire de modification -->
+            <div id="form-modif" class="form-modif">
+                <h3 id="titre-form-modif">Modifier</h3>
+                
+                <div id="champ-titre" class="form-champ" style="display: none;">
+                    <label>Titre :</label>
+                    <input type="text" id="modif-titre" placeholder="Titre">
+                </div>
+                
+                <div id="champ-nom" class="form-champ" style="display: none;">
+                    <label>Nom :</label>
+                    <input type="text" id="modif-nom" placeholder="Nom">
+                </div>
+                
+                <div id="champ-email" class="form-champ" style="display: none;">
+                    <label>Email :</label>
+                    <input type="email" id="modif-email" placeholder="Email">
+                </div>
+                
+                <div id="champ-telephone" class="form-champ" style="display: none;">
+                    <label>Téléphone :</label>
+                    <input type="tel" id="modif-telephone" placeholder="Téléphone">
+                </div>
+                
+                <div id="champ-nationalite" class="form-champ" style="display: none;">
+                    <label>Nationalité :</label>
+                    <input type="text" id="modif-nationalite" placeholder="Nationalité">
+                </div>
+                
+                <div id="champ-description" class="form-champ" style="display: none;">
+                    <label>Description :</label>
+                    <input type="text" id="modif-description" placeholder="Description">
+                </div>
+                
+                <div id="champ-annee" class="form-champ" style="display: none;">
+                    <label>Année :</label>
+                    <input type="number" id="modif-annee" placeholder="Année">
+                </div>
+                
+                <div class="boutons-modif">
+                    <button onclick="enregistrerModification()">Enregistrer</button>
+                    <button onclick="cacherFormulaireModif()">Annuler</button>
+                </div>
+            </div>
+            
+            <!-- Section Livres -->
+            <div id="livres" class="section active">
+                <h2>📖 Gestion des Livres</h2>
+                
+                <div class="form-ajout">
+                    <input type="text" id="titreLivre" placeholder="Titre du livre">
+                    <select id="auteurLivre">
+                        <option value="">Choisir un auteur</option>
+                    </select>
+                    <select id="categorieLivre">
+                        <option value="">Choisir une catégorie</option>
+                    </select>
+                    <input type="number" id="anneeLivre" placeholder="Année" min="1000" max="2024">
+                    <button onclick="ajouterLivre()">➕ Ajouter</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Titre</th>
+                            <th>Auteur</th>
+                            <th>Catégorie</th>
+                            <th>Année</th>
+                            <th>Disponible</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liste-livres">
+                        <!-- Les livres seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section Auteurs -->
+            <div id="auteurs" class="section">
+                <h2>✍️ Gestion des Auteurs</h2>
+                
+                <div class="form-ajout">
+                    <input type="text" id="nomAuteur" placeholder="Nom de l'auteur">
+                    <input type="text" id="nationaliteAuteur" placeholder="Nationalité">
+                    <button onclick="ajouterAuteur()">➕ Ajouter</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Nationalité</th>
+                            <th>Nb Livres</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liste-auteurs">
+                        <!-- Les auteurs seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section Catégories -->
+            <div id="categories" class="section">
+                <h2>🏷️ Gestion des Catégories</h2>
+                
+                <div class="form-ajout">
+                    <input type="text" id="nomCategorie" placeholder="Nom de la catégorie">
+                    <input type="text" id="descriptionCategorie" placeholder="Description">
+                    <button onclick="ajouterCategorie()">➕ Ajouter</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Nb Livres</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liste-categories">
+                        <!-- Les catégories seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section Adhérents -->
+            <div id="adherents" class="section">
+                <h2>👥 Gestion des Adhérents</h2>
+                
+                <div class="form-ajout">
+                    <input type="text" id="nomAdherent" placeholder="Nom complet">
+                    <input type="email" id="emailAdherent" placeholder="Email">
+                    <input type="tel" id="telAdherent" placeholder="Téléphone">
+                    <button onclick="ajouterAdherent()">➕ Ajouter</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liste-adherents">
+                        <!-- Les adhérents seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section Emprunts -->
+            <div id="emprunts" class="section">
+                <h2>🔄 Gestion des Emprunts</h2>
+                
+                <div class="form-ajout">
+                    <select id="livreEmprunt">
+                        <option value="">Choisir un livre</option>
+                    </select>
+                    <select id="adherentEmprunt">
+                        <option value="">Choisir un adhérent</option>
+                    </select>
+                    <button onclick="ajouterEmprunt()">➕ Nouvel emprunt</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Livre</th>
+                            <th>Adhérent</th>
+                            <th>Date emprunt</th>
+                            <th>Date retour</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liste-emprunts">
+                        <!-- Les emprunts seront ajoutés ici -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
